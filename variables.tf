@@ -1,7 +1,13 @@
-variable "create_instance" {
-  description = "Controls if RDS instance should be created (it affects almost all resources)"
-  type        = bool
-  default     = true
+variable "ingress_cidrs" {
+  description = "List of IPv4 CIDR ranges to use on all ingress rules."
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
+variable "egress_cidrs" {
+  description = "List of IPv4 CIDR ranges to use on all egress rules."
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
 }
 
 variable "tags" {
@@ -16,70 +22,100 @@ variable "copy_tags_to_snapshot" {
   default     = false
 }
 
-variable "name" {}
-
-variable "password" {
-  default = ""
+variable "instance_name" {
+  description = "Name for the MSSQL RDS instance. This will display in the console."
+  type        = string
+  default     = ""
 }
 
 variable "username" {
-  default = "admin"
+  description = "The master database account to create."
+  type        = string
+  default     = "root"
 }
 
 variable "engine" {
-  default = "sqlserver-se"
+  description = "The database engine to use."
+  type        = string
+  default     = "sqlserver-se"
 }
 
 variable "engine_version" {
-  default = "15.00.4073.23.v1"
+  description = "MSSQL database engine version."
+  type        = string
+  default     = "15.00.4073.23.v1"
 }
 
 variable "major_engine_version" {
-  default = "15.00"
+  description = "MSSQL major database engine version."
+  type        = string
+  default     = "15.00"
 }
 
 variable "family" {
-  default = "sqlserver-se-15.0"
+  description = "The family of the DB parameter group"
+  type        = string
+  default     = "sqlserver-se-15.0"
 }
 
-variable "parameter_group_name" {
-  default = "default.sqlserver-se-15.0"
+variable "option_group_name" {
+  description = "The name of this specific dbs option group."
+  type        = string
+  default     = ""
 }
-
-variable "option_group_name" {}
 
 variable "instance_class" {
-  default = "db.m5.large"
+  description = "The instance type of the RDS instance"
+  type        = string
+  default     = "db.m5.large"
 }
 
 variable "publicly_accessible" {
+  description = "Bool to control if instance is publicly accessible."
+  type = bool
   default = false
 }
 
 variable "allocated_storage" {
-  default = 20
+  description = "Allocated storage size in GB."
+  type = number
+  default     = 20
 }
 
 variable "max_allocated_storage" {
-  default = 100
+  description = "Maximum storage size in GB."
+  type = number
+  default     = 65535
 }
 
 variable "multi_az" {
-  default = true
+  description = "Specifies if the RDS instance is multi-AZ."
+  type        = bool
+  default     = false
 }
 
 variable "storage_encrypted" {
-  default = true
+  description = "Specifies if the RDS instance is multi-AZ."
+  type        = bool
+  default     = true
 }
 
 variable "timezone" {
-  default = "UTC"
+  description = "Time zone of the DB instance. The timezone can only be set on creation (MSSQL specific)."
+  type        = string
+  default     = "UTC"
 }
 
 variable "port" {
   description = "The port on which to accept connections"
-  type = string
-  default = "1433"
+  type        = number
+  default     = 1433
+}
+
+variable "storage_type" {
+  description = "One of 'standard' (magnetic), 'gp2' (general purpose SSD), or 'io1' (provisioned IOPS SSD)."
+  type        = string
+  default     = "gp2"
 }
 
 variable "final_snapshot_identifier_prefix" {
@@ -102,46 +138,52 @@ variable "deletion_protection" {
 
 variable "backup_retention_period" {
   description = "How long to keep backups for (in days)"
-  type = number
-  default = 7
+  type        = number
+  default     = 7
 }
 
 variable "backup_window" {
-  description = "When to perform DB backups"
+  description = "The daily time range (in UTC) during which automated backups are created if they are enabled. Example: '09:46-10:16'. Must not overlap with maintenance_window."
   type        = string
-  default     = "02:00-03:00"
+  default     = "03:00-03:30"
 }
 
 variable "maintenance_window" {
-  description = "When to perform DB maintenance"
-  type = string
-  default = "sun:05:00-sun:06:00"
+  description = "The window to perform maintenance in. Syntax: 'ddd:hh24:mi-ddd:hh24:mi'. Eg: 'Mon:00:00-Mon:03:00'"
+  type        = string
+  default     = "sun:05:00-sun:06:00"
 }
 
 variable "allow_major_version_upgrade" {
-  default = false
+  description = "Indicates that major version upgrades are allowed."
+  type        = bool
+  default     = false
 }
 
 variable "apply_immediately" {
-  default = true
+  description = "Specifies whether any database modifications are applied immediately, or during the next maintenance window."
+  type        = bool
+  default     = true
 }
 
 variable "auto_minor_version_upgrade" {
-  default = true
+  description = "Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window."
+  type = bool
+  default     = true
 }
 
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Appendix.SQLServer.CommonDBATasks.Collation.html
 variable "character_set_name" {
-  description = "SQL Server collation to use"
-  type = string
-  default = "SQL_Latin1_General_CP1_CI_AS"
+  description = "The character set name to use for DB encoding in Oracle instances. This can't be changed. See Oracle Character Sets Supported in Amazon RDS and Collations and Character Sets for Microsoft SQL Server for more information. This can only be set on creation."
+  type        = string
+  default     = "SQL_Latin1_General_CP1_CI_AS"
 }
 
-variable "monitoring_role_arn" {
-  description = "IAM role for RDS to send enhanced monitoring metrics to CloudWatch"
-  type        = string
-  default     = ""
-}
+# variable "monitoring_role_arn" {
+#   description = "IAM role for RDS to send enhanced monitoring metrics to CloudWatch"
+#   type        = string
+#   default     = ""
+# }
 
 variable "create_monitoring_role" {
   description = "Whether to create the IAM role for RDS enhanced monitoring"
@@ -150,7 +192,7 @@ variable "create_monitoring_role" {
 }
 
 variable "monitoring_interval" {
-  description = "The interval (seconds) between points when Enhanced Monitoring metrics are collected"
+  description = "The interval (seconds) between points when Enhanced Monitoring metrics are collected. Setting to 0 disables enhanced monitoring."
   type        = number
   default     = 0
 }
@@ -191,6 +233,12 @@ variable "create_security_group" {
   default     = true
 }
 
+variable "security_group_tags" {
+  description = "Additional tags for the security group"
+  type        = map(string)
+  default     = {}
+}
+
 variable "security_group_description" {
   description = "The description of the security group. If value is set to empty string it will contain cluster name in the description."
   type        = string
@@ -210,30 +258,46 @@ variable "allowed_cidr_blocks" {
 }
 
 variable "vpc_id" {
-  description = "VPC ID"
+  description = "The ID of the VPC to provision a db in."
   type        = string
   default     = ""
 }
 
-variable "subnets" {
+variable "subnet_ids" {
   description = "List of subnet IDs to use"
-  type        = list(string)
-  default     = []
-}
-
-variable "db_subnet_group_name" {
-  description = "The existing subnet group name to use"
-  type        = string
-  default     = ""
-}
-
-variable "vpc_security_group_ids" {
-  description = "List of VPC security groups to associate to the cluster in addition to the SG we create in this module"
   type        = list(string)
   default     = []
 }
 
 variable "license_model" {
   description = "One of license-included, bring-your-own-license, general-public-license"
-  default = "license-included"
+  default     = "license-included"
+}
+
+variable "random_password_length" {
+  description = "The length of the password to generate for root user."
+  type        = number
+  default     = 16
+}
+variable "store_master_password_as_secret" {
+  description = "Toggle on or off storing the root password in Secrets Manager."
+  default     = true
+}
+
+variable "database_name" {
+  description = "The DB name to create. If omitted, no database is created initially."
+  type        = string
+  default     = ""
+}
+
+variable "db_parameters" {
+  description = "Map of parameters to use in the aws_db_parameter_group resource"
+  type        = list(map(any))
+  default     = [{}]
+}
+
+variable "kms_key_id" {
+  description = "The ARN for the KMS key to encrypt the database."
+  type        = string
+  default     = ""
 }
