@@ -52,7 +52,7 @@ variable "major_engine_version" {
   default     = "15.00"
 }
 
-variable "family" {
+variable "parameter_group_family" {
   description = "The family of the DB parameter group"
   type        = string
   default     = "sqlserver-se-15.0"
@@ -72,20 +72,20 @@ variable "instance_class" {
 
 variable "publicly_accessible" {
   description = "Bool to control if instance is publicly accessible."
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "allocated_storage" {
   description = "Allocated storage size in GB."
-  type = number
+  type        = number
   default     = 20
 }
 
 variable "max_allocated_storage" {
   description = "Maximum storage size in GB."
-  type = number
-  default     = 65535
+  type        = number
+  default     = 500
 }
 
 variable "multi_az" {
@@ -168,7 +168,7 @@ variable "apply_immediately" {
 
 variable "auto_minor_version_upgrade" {
   description = "Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window."
-  type = bool
+  type        = bool
   default     = true
 }
 

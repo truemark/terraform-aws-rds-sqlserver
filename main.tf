@@ -18,6 +18,7 @@ module "db" {
   deletion_protection                 = var.deletion_protection
   engine                              = var.engine
   engine_version                      = var.engine_version
+  family                              = var.parameter_group_family
   final_snapshot_identifier           = var.final_snapshot_identifier_prefix
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
   identifier                          = var.instance_name
@@ -25,11 +26,11 @@ module "db" {
   kms_key_id                          = var.kms_key_id
   license_model                       = var.license_model
   maintenance_window                  = var.maintenance_window
+  major_engine_version                = var.major_engine_version
   max_allocated_storage               = var.max_allocated_storage
   monitoring_interval                 = var.monitoring_interval
   monitoring_role_arn                 = aws_iam_role.rds_enhanced_monitoring.id
   multi_az                            = var.multi_az
-  # option_group_name                   = var.option_group_name
   parameter_group_name                = aws_db_parameter_group.db_parameter_group.name
   password                            = random_password.root_password.result
   performance_insights_enabled        = var.performance_insights_enabled
@@ -49,7 +50,7 @@ module "db" {
 resource "aws_db_parameter_group" "db_parameter_group" {
   name_prefix = var.instance_name
   description = "Terraform managed parameter group for ${var.instance_name}"
-  family      = var.family
+  family      = var.parameter_group_family
   tags        = var.tags
   dynamic "parameter" {
     for_each = var.db_parameters
