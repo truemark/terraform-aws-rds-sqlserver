@@ -113,9 +113,9 @@ variable "port" {
 }
 
 variable "storage_type" {
-  description = "One of 'standard' (magnetic), 'gp2' (general purpose SSD), or 'io1' (provisioned IOPS SSD)."
+  description = "One of 'standard' (magnetic), 'gp3' (general purpose SSD), or 'io1' (provisioned IOPS SSD)."
   type        = string
-  default     = "gp2"
+  default     = "gp3"
 }
 
 variable "final_snapshot_identifier_prefix" {
