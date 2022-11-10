@@ -1,5 +1,7 @@
 # AWS RDS SQL Server
 
+** WARNING: This repository is deprecated and no longer maintained!!**
+
 This terraform module creates a SQL Server RDS instance and associated resources.
 
 ## Quick Links
